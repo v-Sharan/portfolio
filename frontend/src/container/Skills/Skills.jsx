@@ -16,8 +16,6 @@ const Skills = () => {
     });
   }, []);
 
-  console.log("skill", skills);
-
   return (
     <>
       <h2 className="head-text">Skills</h2>

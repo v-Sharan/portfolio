@@ -3,41 +3,34 @@ import React, { useState } from "react";
 import { images } from "../../constants";
 import { AppWrap, MotionWrap } from "../../wrapper";
 import { client } from "../../client";
+import { useForm } from "react-hook-form";
 import "./Footer.scss";
 
 const Footer = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { username, email, message } = formData;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
-  const handleChangeInput = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = () => {
+  const handlePost = (data) => {
     setLoading(true);
 
-    const contact = {
-      _type: "contact",
-      name: formData.username,
-      email: formData.email,
-      message: formData.message,
-    };
-
     client
-      .create(contact)
+      .create({
+        _type: "contact",
+        ...data,
+      })
       .then(() => {
         setLoading(false);
         setIsFormSubmitted(true);
       })
       .catch((err) => console.log(err));
+    reset({ name: "", email: "", message: "" });
   };
 
   return (
@@ -59,40 +52,46 @@ const Footer = () => {
         </div>
       </div>
       {!isFormSubmitted ? (
-        <div className="app__footer-form app__flex">
+        <form
+          className="app__footer-form app__flex"
+          onSubmit={handleSubmit(handlePost)}
+        >
           <div className="app__flex">
             <input
               className="p-text"
               type="text"
               placeholder="Your Name"
-              name="username"
-              value={username}
-              onChange={handleChangeInput}
+              {...register("name", { required: "Name is required" })}
             />
           </div>
+          {errors?.name?.message && (
+            <p className="p-text_error">{errors?.name?.message}</p>
+          )}
           <div className="app__flex">
             <input
               className="p-text"
               type="email"
               placeholder="Your Email"
-              name="email"
-              value={email}
-              onChange={handleChangeInput}
+              {...register("email", { required: "Email is required" })}
             />
           </div>
+          {errors?.email?.message && (
+            <p className="p-text_error">{errors?.email?.message}</p>
+          )}
           <div>
             <textarea
               className="p-text"
               placeholder="Your Message"
-              value={message}
-              name="message"
-              onChange={handleChangeInput}
+              {...register("message", { required: "Message is required" })}
             />
           </div>
-          <button type="button" className="p-text" onClick={handleSubmit}>
+          {errors?.message?.message && (
+            <p className="p-text_error">{errors?.message?.message}</p>
+          )}
+          <button type="submit" className="p-text">
             {!loading ? "Send Message" : "Sending..."}
           </button>
-        </div>
+        </form>
       ) : (
         <div>
           <h3 className="head-text">Thank you for getting in touch!</h3>
