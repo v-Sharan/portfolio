@@ -12,7 +12,6 @@
     "@sanity/client": "^5.4.2",
     "@sanity/image-url": "^1.0.2",
     "framer-motion": "^10.11.2",
-    "node-scss": "^7.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.1",
